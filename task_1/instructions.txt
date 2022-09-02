@@ -1,0 +1,78 @@
+# Installing a LAMP stack on Amazon Linux 2
+
+# First Launch your Amazon Limux 2 instance on your amazon console account
+# set up the security group to allow inbound as follows
+#     Type         Protocol    Port range      Source                       Description(optional)
+#     http          tcp           80           custom(0.0.0.0/0)
+#     https         tcp          443           custom(0.0.0.0/0)
+#     ssh           tcp           22           custom(0.0.0.0/0)
+# Remember in reality(production), you only allow your customed or approved ip addresses for the source. 
+# Enabling 0.0.0.0/0 means you are letting the whole internet world access your application.
+
+# Once you've set the EC2 instance, we can then configure the server for our LAMP stack.
+# Login into the ec2 instance, instruction is on aws connect on your instance page
+# for eg ssh -i "YOUR_KEYPAIR_FILE_LOCATION\YOUR_KEYPAIR_NAME.pem" ec2-user@ec2-3-83-38-57.compute-1.amazonaws.com
+
+# Run the following commands
+sudo yum update -y
+sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2
+sudo yum install -y httpd mariadb-server
+sudo systemctl start httpd
+sudo systemctl enable httpd
+
+# If you encounter error, mke sure you are using Amazon Linux 2 as your AMI and that the apache web-server, 
+# php, and mariadb was properly installed.
+
+# If everything checks out, go to your browser and type http://YOUR_PUBLIC_DNS_IP_FROM_YOUR_EC2_INSTANCE
+# You should see the apache webpage.
+
+# Proceed to set file permissions so you can modify the web app
+sudo usermod -a -G apache ec2-user
+sudo chown -R ec2-user:apache /var/www
+sudo chmod 2775 /var/www && find /var/www -type d -exec sudo chmod 2775 {} \;
+find /var/www -type f -exec sudo chmod 0664 {} \;
+
+# Let's test the server
+echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
+# Go to your browser and type http://YOUR_PUBLIC_DNS_IP_FROM_YOUR_EC2_INSTANCE/phpinfo.php
+# You will see the php file displayed on the browser. After verifying remove the file for safety reasons.
+rm /var/www/html/phpinfo.php
+
+# Let's secure the mariadb server
+sudo systemctl start mariadb
+sudo mysql_secure_installation
+
+# Follow the instructions and respond accordingly
+Enter current password for root (enter for none):
+Set root password? [Y/n] Y
+New password:
+Re-enter new password:
+Remove anonymous users? [Y/n] Y
+Disallow root login remotely? [Y/n] Y
+Remove test database and access to it? [Y/n] Y
+Reload privilege tables now? [Y/n] Y
+
+# To stop the db
+sudo systemctl stop mariadb
+
+# To start at every boot
+sudo systemctl enable mariadb
+
+# This part is optional. You can install phpMyAdmin to manage-modify your MySQL databases on your web server ec2 instance.
+sudo yum install php-mbstring php-xml -y
+sudo systemctl restart httpd
+sudo systemctl restart php-fpm
+cd /var/www/html
+wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz
+mkdir phpMyAdmin && tar -xvzf phpMyAdmin-latest-all-languages.tar.gz -C phpMyAdmin --strip-components 1
+rm phpMyAdmin-latest-all-languages.tar.gz
+sudo systemctl start mariadb
+
+# Go back to your web browser and type http://YOUR_PUBLIC_DNS_IP_FROM_YOUR_EC2_INSTANCE/phpMyAdmin
+
+# A web form pops up for you to sign into.
+Username = root
+Password = THE_PASSWORD_YOU_CREATED
+
+
+
