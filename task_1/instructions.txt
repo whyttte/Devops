@@ -1,4 +1,5 @@
 # Installing a LAMP stack on Amazon Linux 2
+A detailed instruction can be found on https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-lamp-amazon-linux-2.html
 
 # First Launch your Amazon Limux 2 instance on your amazon console account
 # set up the security group to allow inbound as follows
