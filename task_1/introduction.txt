@@ -1,0 +1,22 @@
+Devops Task 1
+
+What is LAMP Stack?
+First of all what is a stack?
+A stack is a set of software tools joined together to create and support an application.
+
+LAMP is a popular web application stack and is infact an acronynym for 
+
+L - Linux Operating System
+A - Apache Web Server
+M - MySQL Database 
+P - PHP programming Language
+
+Linux is a free and open source OS. It offers so much flexibilty when working with codes and most programs support the linux OS
+It is also reliable
+
+Apache web server is also open source. It processes requests through http and https(for the SSL/TLS encryption-have to be 
+installed) so that users can access the web application over a web url.
+
+MySQL is another open source relational database management sytem for storage of application data. It is queried using the SQL language.
+
+PHP is an open source programming language that works with apache to create dynamic websites.
